@@ -1,21 +1,18 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Movement : MonoBehaviour
+public class cadangan : MonoBehaviour
 {
-    [SerializeField] private float playerSpeed = 10f;
-    [SerializeField] private float turnSmoothTime = 0.1f;
+    [SerializeField] private float playerSpeed = 2.0f;
     [SerializeField] private float jumpHeight = 1.0f;
     [SerializeField] private float gravityValue = -9.81f;
     [SerializeField] private bool usePhysics = true;
-    [SerializeField] private float rotationSpeed;
-    float turnSmoothVelocity;
+    [SerializeField] private float rotationSpeed = 4f;
 
     private Camera _mainCamera;
-    public Transform cam;
     private Rigidbody _rb;
     private Controls _controls;
     private Vector3 playerVelocity;
@@ -48,11 +45,13 @@ public class Movement : MonoBehaviour
     private void Update()
     {
 
+        playerVelocity.y = 0f;
+
         if (usePhysics)
         {
             return;
         }
-
+        
         Vector2 input = _controls.Player.Move.ReadValue<Vector2>();
 
         if (_controls.Player.Move.IsPressed())
@@ -71,11 +70,18 @@ public class Movement : MonoBehaviour
             Vector3 targetJump = transform.position + playerVelocity * Time.deltaTime;
             Move(targetJump);
         }
+        // if(input != Vector2.zero){
+        //     float targetAngle = Mathf.Atan2(input.x, input.y) * Mathf.Rad2Deg;
+        //     Quaternion rotation = Quaternion.Euler(0f,targetAngle,0f);
+        //     transform.rotation = Quaternion.Lerp(transform.rotation,rotation,Time.deltaTime*rotationSpeed);
+        // }
 
     }
 
     private void FixedUpdate()
     {
+        
+            playerVelocity.y = 0f;
 
         if (!usePhysics)
         {
@@ -100,7 +106,11 @@ public class Movement : MonoBehaviour
             Vector3 targetJump = transform.position + playerVelocity * Time.deltaTime;
             MovePhysics(targetJump);
         }
-      
+        // if(input != Vector2.zero){
+        //     float targetAngle = Mathf.Atan2(input.x, input.y) * Mathf.Rad2Deg;
+        //     Quaternion rotation = Quaternion.Euler(0f,targetAngle,0f);
+        //     transform.rotation = Quaternion.Lerp(transform.rotation,rotation,Time.deltaTime*rotationSpeed);
+        // }
     }
 
     private Vector3 HandleInput(Vector2 input)
@@ -115,16 +125,6 @@ public class Movement : MonoBehaviour
         right.Normalize();
 
         Vector3 direction = right * input.x + forward * input.y;
-        // Vector3 direction = new Vector3(input.x, 0f, input.y).normalized;
-
-        // float targetAngle = Mathf.Atan2(direction.x, direction.z) + Mathf.Rad2Deg + cam.eulerAngles.y;
-        // float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-        // transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
-        // Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-        if(direction != Vector3.zero){
-            Quaternion toRotation = Quaternion.LookRotation(direction, Vector3.up);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
-        }
 
         return transform.position + direction * playerSpeed * Time.deltaTime;
     }
@@ -132,11 +132,10 @@ public class Movement : MonoBehaviour
     private void Move(Vector3 target)
     {
         transform.position = target;
-
     }
 
     private void MovePhysics(Vector3 target)
     {
-        transform.position = target;
+        _rb.MovePosition(target);
     }
 }
