@@ -51,8 +51,17 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""id"": ""074be283-5daf-4459-a5af-e9669b67af3c"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
+                    ""interactions"": ""Press"",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Running"",
+                    ""type"": ""Button"",
+                    ""id"": ""f31045a5-1d7c-446b-95e8-9ac1110b1743"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -137,10 +146,32 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""5dfac976-7309-4370-bf2c-1bc846c503b5"",
                     ""path"": ""<Keyboard>/space"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press(behavior=2)"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c35b363e-78af-4c79-865e-6d8f6f197c03"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": ""SlowTap,Hold"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Running"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ed5f0fd2-60a1-4e00-96e3-7fadbc5fe5f9"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": ""SlowTap,Hold"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Running"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -154,6 +185,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
+        m_Player_Running = m_Player.FindAction("Running", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -216,6 +248,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Look;
     private readonly InputAction m_Player_Jump;
+    private readonly InputAction m_Player_Running;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -223,6 +256,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_Player_Move;
         public InputAction @Look => m_Wrapper.m_Player_Look;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
+        public InputAction @Running => m_Wrapper.m_Player_Running;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -241,6 +275,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @Jump.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
                 @Jump.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
                 @Jump.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
+                @Running.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRunning;
+                @Running.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRunning;
+                @Running.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRunning;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -254,6 +291,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
+                @Running.started += instance.OnRunning;
+                @Running.performed += instance.OnRunning;
+                @Running.canceled += instance.OnRunning;
             }
         }
     }
@@ -263,5 +303,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+        void OnRunning(InputAction.CallbackContext context);
     }
 }

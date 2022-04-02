@@ -3,16 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 
 public class Movement : MonoBehaviour
 {
     [SerializeField] private float playerSpeed = 10f;
+    [SerializeField] private float playerRun = 5f;
     [SerializeField] private float turnSmoothTime = 0.1f;
-    [SerializeField] private float jumpHeight = 1.0f;
+    [SerializeField] private float jumpHeight = 4f;
     [SerializeField] private float gravityValue = -9.81f;
     [SerializeField] private bool usePhysics = true;
     [SerializeField] private float rotationSpeed;
     float turnSmoothVelocity;
+    public LayerMask layerMask;
 
     private Camera _mainCamera;
     public Transform cam;
@@ -20,7 +23,11 @@ public class Movement : MonoBehaviour
     private Controls _controls;
     private Vector3 playerVelocity;
     private Animator _animator;
+    private CharacterController controller;
     private static readonly int IsWalking = Animator.StringToHash("isWalking");
+    private static readonly int IsJumping = Animator.StringToHash("isJumping");
+    private static readonly int IsRunning = Animator.StringToHash("isRunning");
+
 
     private void Awake()
     {
@@ -47,6 +54,9 @@ public class Movement : MonoBehaviour
     }
     private void Update()
     {
+        // if (ground && playerVelocity.y < 0){
+        //     playerVelocity.y = 0f;
+        // }
 
         if (usePhysics)
         {
@@ -58,7 +68,7 @@ public class Movement : MonoBehaviour
         if (_controls.Player.Move.IsPressed())
         {
             _animator.SetBool(IsWalking, true);
-            Vector3 target = HandleInput(input);
+            Vector3 target = HandleInput(input,playerSpeed);
             Move(target);
         }
         else
@@ -66,16 +76,33 @@ public class Movement : MonoBehaviour
 
         if (_controls.Player.Jump.IsPressed())
         {
-            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
+            _animator.SetBool(IsJumping, true);
+            playerVelocity.y += Mathf.Sqrt(jumpHeight * -2.0f * gravityValue);
             playerVelocity.y += gravityValue * Time.deltaTime;
             Vector3 targetJump = transform.position + playerVelocity * Time.deltaTime;
             Move(targetJump);
+            playerVelocity.y = 0;
+        }else{
+            _animator.SetBool(IsJumping, false);
+        }
+
+         if(_controls.Player.Running.IsPressed()){
+             Debug.Log("masuk running");
+            _animator.SetBool(IsRunning, true);
+            Vector3 target = HandleInput(input,playerRun);
+            MovePhysics(target);
+        }else{
+            _animator.SetBool(IsRunning, false);
         }
 
     }
 
     private void FixedUpdate()
     {
+
+        // if (ground && playerVelocity.y < 0){
+        //     playerVelocity.y = 0f;
+        // }
 
         if (!usePhysics)
         {
@@ -87,7 +114,7 @@ public class Movement : MonoBehaviour
         if (_controls.Player.Move.IsPressed())
         {
             _animator.SetBool(IsWalking, true);
-            Vector3 target = HandleInput(input);
+            Vector3 target = HandleInput(input,playerSpeed);
             MovePhysics(target);
         }
         else
@@ -95,15 +122,29 @@ public class Movement : MonoBehaviour
 
         if (_controls.Player.Jump.IsPressed())
         {
-            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
+            _animator.SetBool(IsJumping, true);
+            playerVelocity.y += Mathf.Sqrt(jumpHeight * -2.0f * gravityValue);
             playerVelocity.y += gravityValue * Time.deltaTime;
             Vector3 targetJump = transform.position + playerVelocity * Time.deltaTime;
             MovePhysics(targetJump);
+            playerVelocity.y = 0;
+        }else{
+            _animator.SetBool(IsJumping, false);
+        }
+
+        if(_controls.Player.Running.IsPressed()){
+            Debug.Log("masuk running");
+            _animator.SetBool(IsRunning, true);
+            Vector3 target = HandleInput(input,playerRun);
+            MovePhysics(target);
+        }else{
+            Debug.Log("tidak running");
+            _animator.SetBool(IsRunning, false);
         }
       
     }
 
-    private Vector3 HandleInput(Vector2 input)
+    private Vector3 HandleInput(Vector2 input, float speed)
     {
         Vector3 forward = _mainCamera.transform.forward;
         Vector3 right = _mainCamera.transform.right;
@@ -115,18 +156,13 @@ public class Movement : MonoBehaviour
         right.Normalize();
 
         Vector3 direction = right * input.x + forward * input.y;
-        // Vector3 direction = new Vector3(input.x, 0f, input.y).normalized;
-
-        // float targetAngle = Mathf.Atan2(direction.x, direction.z) + Mathf.Rad2Deg + cam.eulerAngles.y;
-        // float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-        // transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
-        // Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+       
         if(direction != Vector3.zero){
             Quaternion toRotation = Quaternion.LookRotation(direction, Vector3.up);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
         }
 
-        return transform.position + direction * playerSpeed * Time.deltaTime;
+        return transform.position + direction * speed * Time.deltaTime;
     }
 
     private void Move(Vector3 target)

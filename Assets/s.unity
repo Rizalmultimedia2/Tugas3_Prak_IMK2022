@@ -423,11 +423,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerSpeed: 2
+  playerRun: 25
   turnSmoothTime: 0.1
   jumpHeight: 1
   gravityValue: -9.81
   usePhysics: 1
   rotationSpeed: 270
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 0
   cam: {fileID: 0}
 --- !u!136 &656691890
 CapsuleCollider:
@@ -705,7 +709,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.12142445, y: 0.000000020332461, z: -6.733276e-10, w: 0.9926007}
+  m_LocalRotation: {x: 0.12142445, y: -0.000000020332456, z: 6.7332606e-10, w: 0.9926007}
   m_LocalPosition: {x: 4.08, y: 2.0638871, z: -7.994861}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -1550,7 +1554,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1669290634}
-  m_LocalRotation: {x: 0.10736636, y: -0.0000000042767305, z: 4.6184662e-10, w: 0.99421954}
+  m_LocalRotation: {x: 0.10736636, y: 0.0000000042767296, z: -4.6184653e-10, w: 0.99421954}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1624,7 +1628,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2111292953}
-  m_LocalRotation: {x: 0.12538528, y: 0.0000000170706, z: -0.0000000021574278, w: 0.99210817}
+  m_LocalRotation: {x: 0.12538528, y: -0.000000017070587, z: 0.0000000021574267, w: 0.99210817}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1721,7 +1725,7 @@ Transform:
   m_GameObject: {fileID: 2123027733}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_LocalScale: {x: 50, y: 50, z: 50}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 5
