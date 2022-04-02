@@ -4,29 +4,58 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    public int a = 10;
-    public Camera mainCamera;
+    private int speed = 10;
+    private bool usePhysics = true;
+    private Camera mainCamera;
+    private Rigidbody rb;
+    private Controls controls;
+
+    private void Awake() {
+        controls = new Controls();
+    }
+
+    private void OnEnable() {
+        controls.Enable();
+    }
+
+    private void OnDisable() {
+        controls.Disable();
+    }
+
     // Start is called before the first frame update
     private void Start()
     {
-        mainCamera = Camera.main;   
+        mainCamera = Camera.main;
+        rb = gameObject.GetComponent<Rigidbody>();   
     }
 
     // Update is called once per frame
     private void Update()
     {
-        if(Input.GetKey(KeyCode.W)){
-            Move(Vector2.up);
-        }else if(Input.GetKey(KeyCode.S)){
-            Move(Vector2.down);
-        }else if(Input.GetKey(KeyCode.A)){
-            Move(Vector2.left);
-        }else if(Input.GetKey(KeyCode.D)){
-            Move(Vector2.right);
+        if(usePhysics){
+            return;
+        }
+       
+        if(controls.Player.Move.IsPressed()){
+            Vector2 input = controls.Player.Move.ReadValue<Vector2>();
+            Vector3 target = HandleInput(input);
+            Move(target);
         }
     }
 
-    private async void Move(Vector2 input){
+    private void FixedUpdate()
+    {
+        if(!usePhysics){
+            return;
+        }
+
+       if(controls.Player.Move.IsPressed()){
+            Vector2 input = controls.Player.Move.ReadValue<Vector2>();
+            Vector3 target = HandleInput(input);
+            MovePhysics(target);
+        }
+    }
+    private Vector3 HandleInput(Vector2 input){
         Vector3 forward = mainCamera.transform.forward;
         Vector3 right = mainCamera.transform.right;
 
@@ -38,7 +67,14 @@ public class Movement : MonoBehaviour
         
         Vector3 direction = forward * input.y + right * input.x;
 
-        transform.position = transform.position + direction * a * Time.deltaTime;
+        return transform.position = transform.position + direction * speed * Time.deltaTime;
+    }
 
+    private void Move(Vector3 target){
+       transform.position = target;
+    }
+
+    private void MovePhysics(Vector3 taget){
+        rb.MovePosition(taget);
     }
 }
