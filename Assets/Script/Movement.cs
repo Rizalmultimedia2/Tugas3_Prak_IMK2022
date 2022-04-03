@@ -8,17 +8,13 @@ using UnityEngine.InputSystem.Interactions;
 public class Movement : MonoBehaviour
 {
     [SerializeField] private float playerSpeed = 10f;
-    [SerializeField] private float playerRun = 5f;
-    [SerializeField] private float turnSmoothTime = 0.1f;
     [SerializeField] private float jumpHeight = 4f;
     [SerializeField] private float gravityValue = -9.81f;
     [SerializeField] private bool usePhysics = true;
     [SerializeField] private float rotationSpeed;
     float turnSmoothVelocity;
-    public LayerMask layerMask;
 
     private Camera _mainCamera;
-    public Transform cam;
     private Rigidbody _rb;
     private Controls _controls;
     private Vector3 playerVelocity;
@@ -51,13 +47,10 @@ public class Movement : MonoBehaviour
         _mainCamera = Camera.main;
         _rb = gameObject.GetComponent<Rigidbody>();
         _animator = gameObject.GetComponentInChildren<Animator>();
+        controller = gameObject.GetComponent<CharacterController>();
     }
     private void Update()
     {
-        // if (ground && playerVelocity.y < 0){
-        //     playerVelocity.y = 0f;
-        // }
-
         if (usePhysics)
         {
             return;
@@ -77,32 +70,30 @@ public class Movement : MonoBehaviour
         if (_controls.Player.Jump.IsPressed())
         {
             _animator.SetBool(IsJumping, true);
-            playerVelocity.y += Mathf.Sqrt(jumpHeight * -2.0f * gravityValue);
+            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
             playerVelocity.y += gravityValue * Time.deltaTime;
             Vector3 targetJump = transform.position + playerVelocity * Time.deltaTime;
             Move(targetJump);
-            playerVelocity.y = 0;
+            
         }else{
             _animator.SetBool(IsJumping, false);
         }
 
          if(_controls.Player.Running.IsPressed()){
-             Debug.Log("masuk running");
             _animator.SetBool(IsRunning, true);
-            Vector3 target = HandleInput(input,playerRun);
+            ShakingCamera.Instance.ShakeCamera(3f);
+            Vector3 target = HandleInput(input,playerSpeed + 5f);
             MovePhysics(target);
         }else{
             _animator.SetBool(IsRunning, false);
+            ShakingCamera.Instance.ShakeCamera(0f);
         }
+        playerVelocity.y = 0.9f;
 
     }
 
     private void FixedUpdate()
     {
-
-        // if (ground && playerVelocity.y < 0){
-        //     playerVelocity.y = 0f;
-        // }
 
         if (!usePhysics)
         {
@@ -123,24 +114,25 @@ public class Movement : MonoBehaviour
         if (_controls.Player.Jump.IsPressed())
         {
             _animator.SetBool(IsJumping, true);
-            playerVelocity.y += Mathf.Sqrt(jumpHeight * -2.0f * gravityValue);
+            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
             playerVelocity.y += gravityValue * Time.deltaTime;
             Vector3 targetJump = transform.position + playerVelocity * Time.deltaTime;
             MovePhysics(targetJump);
-            playerVelocity.y = 0;
+            
         }else{
             _animator.SetBool(IsJumping, false);
         }
 
         if(_controls.Player.Running.IsPressed()){
-            Debug.Log("masuk running");
             _animator.SetBool(IsRunning, true);
-            Vector3 target = HandleInput(input,playerRun);
+            ShakingCamera.Instance.ShakeCamera(3f);
+            Vector3 target = HandleInput(input,playerSpeed + 5f);
             MovePhysics(target);
         }else{
-            Debug.Log("tidak running");
             _animator.SetBool(IsRunning, false);
+            ShakingCamera.Instance.ShakeCamera(0f);
         }
+        playerVelocity.y = 0;
       
     }
 
