@@ -20,10 +20,12 @@ public class Movement : MonoBehaviour
     private Vector3 playerVelocity;
     private Animator _animator;
     private CharacterController controller;
+    private float whenIdle;
     private static readonly int IsWalking = Animator.StringToHash("isWalking");
     private static readonly int IsJumping = Animator.StringToHash("isJumping");
     private static readonly int IsRunning = Animator.StringToHash("isRunning");
     private static readonly int IsPunch = Animator.StringToHash("isPunch");
+    private static readonly int IsIdle = Animator.StringToHash("isIdle");
 
 
     private void Awake()
@@ -50,8 +52,9 @@ public class Movement : MonoBehaviour
         _animator = gameObject.GetComponentInChildren<Animator>();
         controller = gameObject.GetComponent<CharacterController>();
     }
-    private void Update()
+    public void Update()
     {
+        IdleAnimation();
         if (usePhysics)
         {
             return;
@@ -61,8 +64,9 @@ public class Movement : MonoBehaviour
 
         if (_controls.Player.Move.IsPressed())
         {
+            whenIdle = 0f;
             _animator.SetBool(IsWalking, true);
-            Vector3 target = HandleInput(input,playerSpeed);
+            Vector3 target = HandleInput(input, playerSpeed);
             Move(target);
         }
         else
@@ -70,27 +74,36 @@ public class Movement : MonoBehaviour
 
         if (_controls.Player.Jump.IsPressed())
         {
+            whenIdle = 0f;
             _animator.SetBool(IsJumping, true);
             playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
             playerVelocity.y += gravityValue * Time.deltaTime;
             Vector3 targetJump = transform.position + playerVelocity * Time.deltaTime;
-             if(_controls.Player.Punch.IsPressed()){
-                 _animator.SetBool("isFalling", true);
-            }else{
+            if (_controls.Player.Punch.IsPressed())
+            {
+                _animator.SetBool("isFalling", true);
+            }
+            else
+            {
                 _animator.SetBool("isFalling", false);
             }
             Move(targetJump);
-            
-        }else{
+
+        }
+        else
+        {
             _animator.SetBool(IsJumping, false);
         }
 
-         if(_controls.Player.Running.IsPressed() && _controls.Player.Move.IsPressed()){
+        if (_controls.Player.Running.IsPressed() && _controls.Player.Move.IsPressed())
+        {
             _animator.SetBool(IsRunning, true);
             ShakingCamera.Instance.ShakeCamera(1f);
-            Vector3 target = HandleInput(input,playerSpeed + 5f);
+            Vector3 target = HandleInput(input, playerSpeed + 5f);
             MovePhysics(target);
-        }else{
+        }
+        else
+        {
             _animator.SetBool(IsRunning, false);
             ShakingCamera.Instance.ShakeCamera(0f);
         }
@@ -98,9 +111,9 @@ public class Movement : MonoBehaviour
 
     }
 
-    private void FixedUpdate()
+    public void FixedUpdate()
     {
-
+        IdleAnimation();
         if (!usePhysics)
         {
             return;
@@ -110,8 +123,9 @@ public class Movement : MonoBehaviour
 
         if (_controls.Player.Move.IsPressed())
         {
+            whenIdle = 0f;
             _animator.SetBool(IsWalking, true);
-            Vector3 target = HandleInput(input,playerSpeed);
+            Vector3 target = HandleInput(input, playerSpeed);
             MovePhysics(target);
         }
         else
@@ -119,39 +133,68 @@ public class Movement : MonoBehaviour
 
         if (_controls.Player.Jump.IsPressed())
         {
+            whenIdle = 0f;
             _animator.SetBool(IsJumping, true);
             playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
             playerVelocity.y += gravityValue * Time.deltaTime;
             Vector3 targetJump = transform.position + playerVelocity * Time.deltaTime;
-            if(_controls.Player.Punch.IsPressed()){
-                 _animator.SetBool("isFalling", true);
-            }else{
+            if (_controls.Player.Punch.IsPressed())
+            {
+                _animator.SetBool("isFalling", true);
+            }
+            else
+            {
                 _animator.SetBool("isFalling", false);
             }
             MovePhysics(targetJump);
-            
-        }else{
+
+        }
+        else
+        {
             _animator.SetBool(IsJumping, false);
         }
 
-        if(_controls.Player.Running.IsPressed() && _controls.Player.Move.IsPressed()){
+        if (_controls.Player.Running.IsPressed() && _controls.Player.Move.IsPressed())
+        {
             _animator.SetBool(IsRunning, true);
             ShakingCamera.Instance.ShakeCamera(1f);
-            Vector3 target = HandleInput(input,playerSpeed + 5f);
+            Vector3 target = HandleInput(input, playerSpeed + 5f);
             MovePhysics(target);
-        }else{
+        }
+        else
+        {
             _animator.SetBool(IsRunning, false);
             ShakingCamera.Instance.ShakeCamera(0f);
         }
 
-        
-        if(_controls.Player.Punch.IsPressed()){
+        if (_controls.Player.Punch.IsPressed())
+        {
             _animator.SetBool(IsPunch, true);
-        }else{
+        }
+        else
+        {
             _animator.SetBool(IsPunch, false);
         }
         playerVelocity.y = 0;
-      
+
+    }
+
+
+
+    private void IdleAnimation()
+    {
+        whenIdle += Time.deltaTime;
+        if (whenIdle >= 16f && !_controls.Player.Jump.IsPressed() && !_controls.Player.Move.IsPressed())
+        {
+            Debug.Log("whenIdle = " + whenIdle);
+            Debug.Log("Masuk idle");
+            _animator.SetBool(IsIdle, true);
+        }
+        else
+        {
+            Debug.Log("gak masuk");
+            _animator.SetBool(IsIdle, false);
+        }
     }
 
     private Vector3 HandleInput(Vector2 input, float speed)
@@ -166,8 +209,9 @@ public class Movement : MonoBehaviour
         right.Normalize();
 
         Vector3 direction = right * input.x + forward * input.y;
-       
-        if(direction != Vector3.zero){
+
+        if (direction != Vector3.zero)
+        {
             Quaternion toRotation = Quaternion.LookRotation(direction, Vector3.up);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
         }
