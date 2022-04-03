@@ -23,6 +23,7 @@ public class Movement : MonoBehaviour
     private static readonly int IsWalking = Animator.StringToHash("isWalking");
     private static readonly int IsJumping = Animator.StringToHash("isJumping");
     private static readonly int IsRunning = Animator.StringToHash("isRunning");
+    private static readonly int IsPunch = Animator.StringToHash("isPunch");
 
 
     private void Awake()
@@ -73,22 +74,27 @@ public class Movement : MonoBehaviour
             playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
             playerVelocity.y += gravityValue * Time.deltaTime;
             Vector3 targetJump = transform.position + playerVelocity * Time.deltaTime;
+             if(_controls.Player.Punch.IsPressed()){
+                 _animator.SetBool("isFalling", true);
+            }else{
+                _animator.SetBool("isFalling", false);
+            }
             Move(targetJump);
             
         }else{
             _animator.SetBool(IsJumping, false);
         }
 
-         if(_controls.Player.Running.IsPressed()){
+         if(_controls.Player.Running.IsPressed() && _controls.Player.Move.IsPressed()){
             _animator.SetBool(IsRunning, true);
-            ShakingCamera.Instance.ShakeCamera(3f);
+            ShakingCamera.Instance.ShakeCamera(1f);
             Vector3 target = HandleInput(input,playerSpeed + 5f);
             MovePhysics(target);
         }else{
             _animator.SetBool(IsRunning, false);
             ShakingCamera.Instance.ShakeCamera(0f);
         }
-        playerVelocity.y = 0.9f;
+        playerVelocity.y = 0;
 
     }
 
@@ -117,20 +123,32 @@ public class Movement : MonoBehaviour
             playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
             playerVelocity.y += gravityValue * Time.deltaTime;
             Vector3 targetJump = transform.position + playerVelocity * Time.deltaTime;
+            if(_controls.Player.Punch.IsPressed()){
+                 _animator.SetBool("isFalling", true);
+            }else{
+                _animator.SetBool("isFalling", false);
+            }
             MovePhysics(targetJump);
             
         }else{
             _animator.SetBool(IsJumping, false);
         }
 
-        if(_controls.Player.Running.IsPressed()){
+        if(_controls.Player.Running.IsPressed() && _controls.Player.Move.IsPressed()){
             _animator.SetBool(IsRunning, true);
-            ShakingCamera.Instance.ShakeCamera(1.5f);
+            ShakingCamera.Instance.ShakeCamera(1f);
             Vector3 target = HandleInput(input,playerSpeed + 5f);
             MovePhysics(target);
         }else{
             _animator.SetBool(IsRunning, false);
             ShakingCamera.Instance.ShakeCamera(0f);
+        }
+
+        
+        if(_controls.Player.Punch.IsPressed()){
+            _animator.SetBool(IsPunch, true);
+        }else{
+            _animator.SetBool(IsPunch, false);
         }
         playerVelocity.y = 0;
       
