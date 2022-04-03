@@ -26,6 +26,7 @@ public class Movement : MonoBehaviour
     private static readonly int IsRunning = Animator.StringToHash("isRunning");
     private static readonly int IsPunch = Animator.StringToHash("isPunch");
     private static readonly int IsIdle = Animator.StringToHash("isIdle");
+    private static readonly int IsFalling = Animator.StringToHash("isFalling");
 
 
     private void Awake()
@@ -81,11 +82,11 @@ public class Movement : MonoBehaviour
             Vector3 targetJump = transform.position + playerVelocity * Time.deltaTime;
             if (_controls.Player.Punch.IsPressed())
             {
-                _animator.SetBool("isFalling", true);
+                _animator.SetBool(IsFalling, true);
             }
             else
             {
-                _animator.SetBool("isFalling", false);
+                _animator.SetBool(IsFalling, false);
             }
             Move(targetJump);
 
@@ -98,7 +99,7 @@ public class Movement : MonoBehaviour
         if (_controls.Player.Running.IsPressed() && _controls.Player.Move.IsPressed())
         {
             _animator.SetBool(IsRunning, true);
-            ShakingCamera.Instance.ShakeCamera(1f);
+            ShakingCamera.Instance.ShakeCamera(1.8f);
             Vector3 target = HandleInput(input, playerSpeed + 5f);
             MovePhysics(target);
         }
@@ -140,11 +141,11 @@ public class Movement : MonoBehaviour
             Vector3 targetJump = transform.position + playerVelocity * Time.deltaTime;
             if (_controls.Player.Punch.IsPressed())
             {
-                _animator.SetBool("isFalling", true);
+                _animator.SetBool(IsFalling, true);
             }
             else
             {
-                _animator.SetBool("isFalling", false);
+                _animator.SetBool(IsFalling, false);
             }
             MovePhysics(targetJump);
 
@@ -157,7 +158,7 @@ public class Movement : MonoBehaviour
         if (_controls.Player.Running.IsPressed() && _controls.Player.Move.IsPressed())
         {
             _animator.SetBool(IsRunning, true);
-            ShakingCamera.Instance.ShakeCamera(1f);
+            ShakingCamera.Instance.ShakeCamera(1.8f);
             Vector3 target = HandleInput(input, playerSpeed + 5f);
             MovePhysics(target);
         }
@@ -186,13 +187,10 @@ public class Movement : MonoBehaviour
         whenIdle += Time.deltaTime;
         if (whenIdle >= 16f && !_controls.Player.Jump.IsPressed() && !_controls.Player.Move.IsPressed())
         {
-            Debug.Log("whenIdle = " + whenIdle);
-            Debug.Log("Masuk idle");
             _animator.SetBool(IsIdle, true);
         }
         else
         {
-            Debug.Log("gak masuk");
             _animator.SetBool(IsIdle, false);
         }
     }
