@@ -125,7 +125,7 @@ public class Movement : MonoBehaviour
 
         if(_controls.Player.Running.IsPressed()){
             _animator.SetBool(IsRunning, true);
-            ShakingCamera.Instance.ShakeCamera(3f);
+            ShakingCamera.Instance.ShakeCamera(1.5f);
             Vector3 target = HandleInput(input,playerSpeed + 5f);
             MovePhysics(target);
         }else{
