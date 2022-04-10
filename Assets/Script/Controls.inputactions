@@ -149,6 +149,17 @@
                 },
                 {
                     "name": "",
+                    "id": "5e7b0e08-7103-405f-bc6d-882c7f89c652",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "5dfac976-7309-4370-bf2c-1bc846c503b5",
                     "path": "<Keyboard>/space",
                     "interactions": "Press(behavior=2)",
