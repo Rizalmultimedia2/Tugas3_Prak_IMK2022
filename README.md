@@ -6,4 +6,6 @@
 
 ##### Untuk documentationnya : 
 
-![Documentation](https://github.com/Rizalmultimedia2/Tugas_Prak_IMK2022/blob/ar/Assets/Documentation/AR_From_Phone.jpg "Logo Title Text 1")
+![Documentation](https://github.com/Rizalmultimedia2/Tugas_Prak_IMK2022/blob/ar/Assets/Documentation/AR_From_Phone.jpg "AR From Phone")
+
+![Documentation](https://github.com/Rizalmultimedia2/Tugas_Prak_IMK2022/blob/ar/Assets/Documentation/AR_From_PC.jpeg "AR From PC")
