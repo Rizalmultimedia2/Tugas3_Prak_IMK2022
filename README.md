@@ -6,4 +6,4 @@
 
 ##### Untuk documentationnya : 
 
-![Test][/Assets/Documentation/AR_From_Phone.jpg]
+![Test][https://github.com/Rizalmultimedia2/Tugas_Prak_IMK2022/blob/ar/Assets/Documentation/AR_From_Phone.jpg]
